@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">bluetooth rgb led controller</string>
+    <string name="app_name">Bluetooth RGB Led Controller</string>
+    <string name="title">LED Controller</string>
+    <string name="connect">Connect Device</string>
+    <string name="on_connect">Connected</string>
+    <string name="turn_on">Turn On</string>
+    <string name="turn_off">Turn Off</string>
+    <string name="initial_progress">0</string>
+    <string name="red_text">Red</string>
+    <string name="blue_text">Blue</string>
+    <string name="white_text">White</string>
+    <string name="purple_text">Purple</string>
+    <string name="green_text">Green</string>
+    <string name="pink_text">Pink</string>
 </resources>
