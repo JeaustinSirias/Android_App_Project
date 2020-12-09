@@ -5,13 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private TextView bar_progress;
@@ -24,13 +29,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean connected_to;
     Intent bluetooth_enablingIntent;
     int requestCode_bluetooth;
+    ListView showDevices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // conectivity to bluetooth
+        // connectivity to bluetooth
         bluetooth_button = findViewById(R.id.connect_button);
         adapter_bluetooth = BluetoothAdapter.getDefaultAdapter();
         connected_to  = false;
@@ -140,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         bluetooth_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // if bluetooth is not connected
                 if(!connected_to){
                     if(adapter_bluetooth == null){
@@ -152,16 +159,27 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // if bluetooth is connected to a device
-                if(connected_to){
-                    if(adapter_bluetooth.isEnabled()){
+                //if(connected_to)
+                if(adapter_bluetooth.isEnabled()){
+                    openListDevicesActivity();
+
+
+
+                    /*if(adapter_bluetooth.isEnabled()){
                         adapter_bluetooth.disable();
                         connected_to = false;
-                    }
+                    }*/
                 }
 
             }
         });
 
+
+    }
+
+    private void openListDevicesActivity() {
+        Intent openList = new Intent(this, ListDevicesActivity.class);
+        startActivity(openList);
 
     }
 
