@@ -22,22 +22,43 @@ public class MainActivity extends AppCompatActivity {
     private TextView bar_progress;
     private SeekBar intensity_bar;
     Button power_button;
+    boolean power_state = false;
 
     // bluetooth variables/elements
+    BluetoothSocket hc_socket = null;
     Button bluetooth_button;
-    public BluetoothAdapter adapter_bluetooth;
+    BluetoothAdapter adapter_bluetooth;
     private boolean connected_to;
-    private boolean noDisconnect = true;
     Intent bluetooth_enablingIntent;
     int requestCode_bluetooth;
     //static final UUID mUUID = UUID.fromString("00001133-0000-1000-8000-00805f9b34fb");
     private final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+
+    // color light elements
+    Button white_button;
+    Button blue_button;
+    Button purple_button;
+    Button yellow_button;
+    Button green_button;
+    Button red_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // turn on/off button
+        power_button = findViewById(R.id.led_button);
+        // color light elements
+        white_button = findViewById(R.id.white_button);
+        blue_button = findViewById(R.id.blue_button);
+        purple_button = findViewById(R.id.purple_button);
+        yellow_button = findViewById(R.id.yellow_button);
+        green_button = findViewById(R.id.green_button);
+        red_button = findViewById(R.id.red_button);
+        // progress bar elements
+        bar_progress = findViewById(R.id.bar_progress);
+        intensity_bar = findViewById(R.id.intensity_bar);
         // connectivity to bluetooth
         bluetooth_button = findViewById(R.id.connect_button);
         adapter_bluetooth = BluetoothAdapter.getDefaultAdapter();
@@ -45,89 +66,10 @@ public class MainActivity extends AppCompatActivity {
         bluetooth_enablingIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         requestCode_bluetooth = 1;
 
+        attachElements();
         BluetoothConnection();
-
-        // turn on/off button
-        power_button = findViewById(R.id.led_button);
-
-        // color light elements
-        Button white_button = findViewById(R.id.white_button);
-        Button blue_button = findViewById(R.id.blue_button);
-        Button purple_button = findViewById(R.id.purple_button);
-        Button yellow_button = findViewById(R.id.yellow_button);
-        Button green_button = findViewById(R.id.green_button);
-        Button red_button = findViewById(R.id.red_button);
-        // progress bar elements
-        bar_progress = findViewById(R.id.bar_progress);
-        intensity_bar = findViewById(R.id.intensity_bar);
-
-        //  intensity LED progress bar control
-        intensity_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int intensity = 0;
-            @SuppressLint("DefaultLocale")
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                intensity = progress;
-                bar_progress.setText(String.format("%d", intensity));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                bar_progress.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                bar_progress.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        // Power led button listener
-        power_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        // color buttons on click listeners
-        white_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        blue_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        purple_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        yellow_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        green_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        red_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
+
     // message to print result of connection trying
     @SuppressLint("MissingSuperCall")
     @Override
@@ -159,10 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 }//************************************
 
                 // if bluetooth is connected to a device
-
-                BluetoothSocket hc_socket = null;
-
-
                 if(adapter_bluetooth.isEnabled() && !connected_to){
                     //BluetoothDevice hc_05 = adapter_bluetooth.getRemoteDevice("54:8D:5A:20:7B:EA");//"98:D3:61:F5:CB:58"); PC
                     BluetoothDevice hc_05 = adapter_bluetooth.getRemoteDevice("98:D3:61:F5:CB:58");//HC-05
@@ -190,34 +128,107 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Connection Successful", Toast.LENGTH_LONG).show();
                         bluetooth_button.setText(R.string.on_connect);
                     }
-
-                    //if(connected_to)
-                    /*if(adapter_bluetooth.isEnabled()){
-                        adapter_bluetooth.disable();
-                        connected_to = false;
-                    }*/
                 }else if(!connected_to){
                     Toast.makeText(getApplicationContext(), "Bluetooth not enabled", Toast.LENGTH_LONG).show();
                 }
+            }
 
-                /*if(hc_socket.isConnected()) {
-                    try {
-                        hc_socket.close();
-                        Toast.makeText(getApplicationContext(), "Connection closed", Toast.LENGTH_LONG).show();
-                        connected_to = false;
-                        bluetooth_button.setText(R.string.connect);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }*/
+        });
 
+    }// end of BluetoothConnection
 
+    private void sendColor(String color, BluetoothSocket thisSocket){
+        if (thisSocket!=null)  {
+            try {
+                thisSocket.getOutputStream().write(color.toString().getBytes());
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void attachElements(){
+
+        //  intensity LED progress bar control
+        intensity_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            //int intensity = 0;
+            String intense = "0";
+            @SuppressLint("DefaultLocale")
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                intense = String.format("%d", progress);
+                bar_progress.setText(intense);
+                sendColor(intense, hc_socket);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                bar_progress.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                bar_progress.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // Power led button listener
+        power_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!power_state){
+                    sendColor("on", hc_socket);
+                    power_state = true;
+                }else if(power_state){
+                    sendColor("off", hc_socket);
+                    power_state = false;
+                }
+            }
+        });
+
+        // color buttons on click listeners
+        white_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendColor("white", hc_socket);
+            }
+        });
+        blue_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendColor("blue", hc_socket);
+
+            }
+        });
+        purple_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendColor("purple", hc_socket);
+
+            }
+        });
+        yellow_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendColor("yellow", hc_socket);
+
+            }
+        });
+        green_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendColor("green", hc_socket);
+
+            }
+        });
+        red_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendColor("red", hc_socket);
             }
         });
 
 
     }
-
-
 
 }
