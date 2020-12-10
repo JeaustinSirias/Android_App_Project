@@ -158,7 +158,17 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 intense = String.format("%d", progress);
                 bar_progress.setText(intense);
-                sendColor(intense, hc_socket);
+
+                if(progress < 40){
+                    sendColor("down", hc_socket);
+                }else if(progress < 60){
+                    sendColor("low", hc_socket);
+                }else if(progress < 80){
+                    sendColor("mid", hc_socket);
+                }else {
+                    sendColor("high", hc_socket);
+
+                }
             }
 
             @Override
