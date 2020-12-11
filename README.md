@@ -28,4 +28,6 @@ Un acercamiento a la implementación, elaborado para esta actividad se muestra e
 ![bt](https://i.imgur.com/Tjyosu8.jpg)
 
 ## El software
-Para esta ocasión se ha empleado el entorno de desarrollo [Android Studio])(https://developer.android.com/studio)
+Para esta ocasión se ha empleado el entorno de desarrollo [Android Studio](https://developer.android.com/studio) para implementar la aplicación propuesta. A continuación se muestra un pantallazo de la interfaz diseñada para cotrolar el dispositivo LED a distancia:
+
+![gui](https://i.imgur.com/r7tVMV2.jpeg)
