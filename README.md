@@ -2,7 +2,7 @@
 
 ## Autores
 - Jeaustin Sirias Chacón. Carné B66861
-- Juan Cortés Rentería. Carné B5
+- Juan Cortés Rentería. Carné B52250
 
 ## Características
 Este repositorio muestra la implementación de una aplicación android para el control de un dispostivo LED de tipo RGB a través de un canal de comunicación por Bluetooth, disponiendo de las siguiente funcionalidades:
